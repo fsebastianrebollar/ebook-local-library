@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca ePub local</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Biblioteca ePub local</h1>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="flash">
+            {% for msg in messages %}
+            <p>{{ msg }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <form method="post" enctype="multipart/form-data" class="upload-form">
+            <label for="file" class="file-label">Seleccionar archivo .epub</label>
+            <input type="file" id="file" name="file" accept=".epub">
+            <button type="submit">Subir</button>
+        </form>
+
+        <hr>
+
+        {% if books %}
+        <div class="sort-bar">
+            <span>Ordenar:</span>
+            {% for key, label in sort_options.items() %}
+            <a href="?sort={{ key }}" class="sort-link {% if sort_by == key %}active{% endif %}">{{ label }}</a>
+            {% endfor %}
+        </div>
+
+        <ul class="file-list">
+            {% for book in books %}
+            <li>
+                <div class="book-info">
+                    <span class="book-title">{{ book.title }}</span>
+                    <span class="book-author">{{ book.author }}</span>
+                </div>
+                <a class="btn-download" href="{{ url_for('download', filename=book.filename) }}">Descargar</a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="empty">No hay archivos ePub todavia.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
