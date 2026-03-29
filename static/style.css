@@ -38,11 +38,43 @@ h1 {
     margin-bottom: 1.2rem;
 }
 
-.upload-form input[type="file"] {
-    font-size: 1rem;
+.file-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
 }
 
-.upload-form button {
+.file-picker {
+    display: block;
+    padding: 0.8rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    background: #f0f0f0;
+    color: #333;
+    border: 2px dashed #aaa;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.file-picker:active {
+    background: #e0e0e0;
+}
+
+.file-name {
+    font-size: 0.88rem;
+    color: #444;
+    word-break: break-word;
+    min-height: 0;
+}
+
+.file-name:empty {
+    display: none;
+}
+
+.btn-upload {
     padding: 0.8rem;
     font-size: 1.1rem;
     background: #2563eb;
@@ -52,14 +84,56 @@ h1 {
     cursor: pointer;
 }
 
-.upload-form button:active {
+.btn-upload:active {
     background: #1d4ed8;
+}
+
+.btn-upload:disabled {
+    background: #a0a0a0;
+    cursor: not-allowed;
 }
 
 hr {
     border: none;
     border-top: 1px solid #ddd;
     margin: 1rem 0;
+}
+
+.search-form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 0.8rem;
+}
+
+.search-form input[type="text"] {
+    flex: 1;
+    padding: 0.6rem 0.8rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.btn-search {
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.btn-search:active {
+    background: #1d4ed8;
+}
+
+.search-clear {
+    font-size: 0.85rem;
+    color: #dc2626;
+    text-decoration: none;
+    white-space: nowrap;
 }
 
 .sort-bar {
@@ -90,14 +164,43 @@ hr {
 
 .file-list li {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     background: #fff;
-    padding: 0.8rem 1rem;
+    padding: 0.6rem 0.8rem;
     margin-bottom: 0.5rem;
     border-radius: 8px;
     border: 1px solid #e0e0e0;
-    gap: 0.8rem;
+    gap: 0.6rem;
+}
+
+.cover-thumb {
+    width: 40px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 3px;
+    flex-shrink: 0;
+    background: #e5e5e5;
+}
+
+.cover-placeholder {
+    background: #ddd;
+}
+
+.cover-detail-wrap {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.cover-detail {
+    max-width: 200px;
+    max-height: 300px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+a.book-info {
+    text-decoration: none;
+    color: inherit;
 }
 
 .book-info {
@@ -132,6 +235,253 @@ hr {
 
 .btn-download:active {
     background: #15803d;
+}
+
+.hint {
+    font-size: 0.82rem;
+    color: #666;
+    margin-top: -0.3rem;
+}
+
+.setup-link {
+    text-align: right;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+}
+
+.status-ok {
+    background: #d4edda;
+    border: 1px solid #b7dfb9;
+    border-radius: 6px;
+    padding: 0.7rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.status-warn {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 6px;
+    padding: 0.7rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.upload-form label {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.upload-form input[type="email"],
+.upload-form input[type="password"] {
+    padding: 0.6rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.detail-title {
+    text-align: left;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.meta-list {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.2rem;
+}
+
+.meta-list dt {
+    font-weight: 600;
+    font-size: 0.82rem;
+    color: #888;
+    margin-top: 0.7rem;
+}
+
+.meta-list dt:first-child {
+    margin-top: 0;
+}
+
+.meta-list dd {
+    font-size: 0.95rem;
+    margin-top: 0.1rem;
+    word-break: break-word;
+}
+
+.meta-list .description {
+    font-size: 0.88rem;
+    color: #444;
+    line-height: 1.4;
+}
+
+.detail-actions {
+    display: flex;
+    gap: 0.8rem;
+}
+
+.btn-read {
+    display: inline-block;
+    padding: 0.6rem 1rem;
+    background: #2563eb;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.btn-read:active {
+    background: #1d4ed8;
+}
+
+.detail-actions .btn-read,
+.detail-actions .btn-download {
+    flex: 1;
+    text-align: center;
+    padding: 0.8rem;
+    font-size: 1.1rem;
+}
+
+.delete-form {
+    flex: 1;
+}
+
+.btn-delete {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1.1rem;
+    background: #dc2626;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-delete:active {
+    background: #b91c1c;
+}
+
+/* Reader */
+
+.reader-body {
+    padding: 0;
+}
+
+.reader-nav {
+    position: sticky;
+    top: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    padding: 0.5rem 1rem;
+    z-index: 10;
+}
+
+.reader-nav .back-link {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+}
+
+.reader-chapter-info {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.reader-chapters {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0.5rem 1rem;
+}
+
+.reader-chapters summary {
+    font-size: 0.9rem;
+    color: #2563eb;
+    cursor: pointer;
+}
+
+.chapter-list {
+    margin-top: 0.5rem;
+    padding-left: 1.5rem;
+    font-size: 0.88rem;
+    line-height: 1.8;
+}
+
+.chapter-list a {
+    color: #333;
+    text-decoration: none;
+}
+
+.chapter-list a.active {
+    font-weight: 700;
+    color: #2563eb;
+}
+
+.reader-content {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 1rem;
+    font-size: 1rem;
+    line-height: 1.7;
+    word-break: break-word;
+}
+
+.reader-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0.5rem auto;
+}
+
+.reader-content h1,
+.reader-content h2,
+.reader-content h3 {
+    margin-top: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.reader-content p {
+    margin-bottom: 0.8rem;
+}
+
+.reader-pagination {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.btn-prev,
+.btn-next {
+    display: inline-block;
+    padding: 0.7rem 1.2rem;
+    background: #2563eb;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.btn-prev:active,
+.btn-next:active {
+    background: #1d4ed8;
+}
+
+.btn-prev.disabled,
+.btn-next.disabled {
+    visibility: hidden;
 }
 
 .empty {

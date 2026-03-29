@@ -21,34 +21,60 @@
         {% endwith %}
 
         <form method="post" enctype="multipart/form-data" class="upload-form">
-            <label for="file" class="file-label">Seleccionar archivo .epub</label>
-            <input type="file" id="file" name="file" accept=".epub">
-            <button type="submit">Subir</button>
+            <label for="file" class="file-picker">
+                Seleccionar archivo {% if has_acsm %}.epub o .acsm{% else %}.epub{% endif %}
+            </label>
+            <input type="file" id="file" name="file" class="file-input"
+                   onchange="var b=this.form.querySelector('.btn-upload');var n=this.form.querySelector('.file-name');if(this.files.length){b.disabled=false;n.textContent=this.files[0].name;}else{b.disabled=true;n.textContent='';}">
+            <span class="file-name"></span>
+            <button type="submit" class="btn-upload" disabled>Subir</button>
+            {% if has_acsm %}
+            <p class="hint">Los archivos .acsm se convierten automaticamente a ePub.</p>
+            {% endif %}
         </form>
 
+        <p class="setup-link"><a href="{{ url_for('setup_adobe') }}">Configuracion ACSM</a></p>
+
         <hr>
+
+        <form method="get" class="search-form">
+            <input type="text" name="q" value="{{ query }}" placeholder="Buscar por titulo o autor..." autocomplete="off">
+            <button type="submit" class="btn-search">Buscar</button>
+            {% if query %}
+            <a href="{{ url_for('index') }}" class="search-clear">Limpiar</a>
+            {% endif %}
+        </form>
 
         {% if books %}
         <div class="sort-bar">
             <span>Ordenar:</span>
             {% for key, label in sort_options.items() %}
-            <a href="?sort={{ key }}" class="sort-link {% if sort_by == key %}active{% endif %}">{{ label }}</a>
+            <a href="?sort={{ key }}{% if query %}&q={{ query }}{% endif %}" class="sort-link {% if sort_by == key %}active{% endif %}">{{ label }}</a>
             {% endfor %}
         </div>
 
         <ul class="file-list">
             {% for book in books %}
             <li>
-                <div class="book-info">
+                {% if book.cover %}
+                <img class="cover-thumb" src="{{ url_for('epub_resource', filename=book.filename, resource=book.cover) }}" alt="">
+                {% else %}
+                <div class="cover-thumb cover-placeholder"></div>
+                {% endif %}
+                <a class="book-info" href="{{ url_for('book_detail', filename=book.filename) }}">
                     <span class="book-title">{{ book.title }}</span>
                     <span class="book-author">{{ book.author }}</span>
-                </div>
+                </a>
                 <a class="btn-download" href="{{ url_for('download', filename=book.filename) }}">Descargar</a>
             </li>
             {% endfor %}
         </ul>
         {% else %}
+        {% if query %}
+        <p class="empty">No se encontraron resultados para "{{ query }}".</p>
+        {% else %}
         <p class="empty">No hay archivos ePub todavia.</p>
+        {% endif %}
         {% endif %}
     </div>
 </body>

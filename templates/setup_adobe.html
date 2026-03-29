@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuracion Adobe - Biblioteca ePub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Configuracion ACSM</h1>
+
+        <p><a href="{{ url_for('index') }}">&larr; Volver a la biblioteca</a></p>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="flash">
+            {% for msg in messages %}
+            <p>{{ msg }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% if authorized %}
+        <div class="status-ok">
+            <p>Cuenta Adobe autorizada. Puedes subir archivos .acsm.</p>
+        </div>
+        {% else %}
+        <div class="status-warn">
+            <p>No hay cuenta Adobe configurada. Necesitas autorizar una para poder convertir archivos .acsm a ePub.</p>
+        </div>
+
+        <form method="post" class="upload-form">
+            <p class="hint">Deja los campos vacios para autorizacion anonima (recomendado).</p>
+
+            <label for="email">Adobe ID (email):</label>
+            <input type="email" id="email" name="email" placeholder="Opcional">
+
+            <label for="password">Contrasena:</label>
+            <input type="password" id="password" name="password" placeholder="Opcional">
+
+            <button type="submit">Autorizar dispositivo</button>
+        </form>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leer - Biblioteca ePub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="reader-body">
+    <div class="reader-nav">
+        <a href="{{ url_for('book_detail', filename=book_filename) }}" class="back-link">&larr; Detalle</a>
+        <span class="reader-chapter-info">{{ chapter_idx + 1 }} / {{ total_chapters }}</span>
+    </div>
+
+    <div class="reader-chapters">
+        <details>
+            <summary>Capitulos</summary>
+            <ol class="chapter-list">
+                {% for ch in spine %}
+                <li>
+                    <a href="{{ url_for('read_book', filename=book_filename, ch=loop.index0) }}"
+                       {% if loop.index0 == chapter_idx %}class="active"{% endif %}>
+                        {{ ch.label }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ol>
+        </details>
+    </div>
+
+    <div class="reader-content">
+        {{ chapter_html }}
+    </div>
+
+    <div class="reader-pagination">
+        {% if chapter_idx > 0 %}
+        <a href="{{ url_for('read_book', filename=book_filename, ch=chapter_idx - 1) }}" class="btn-prev">&larr; Anterior</a>
+        {% else %}
+        <span class="btn-prev disabled"></span>
+        {% endif %}
+
+        {% if chapter_idx < total_chapters - 1 %}
+        <a href="{{ url_for('read_book', filename=book_filename, ch=chapter_idx + 1) }}" class="btn-next">Siguiente &rarr;</a>
+        {% else %}
+        <span class="btn-next disabled"></span>
+        {% endif %}
+    </div>
+</body>
+</html>

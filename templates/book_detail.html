@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ book.title }} - Biblioteca ePub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <p><a href="{{ url_for('index') }}" class="back-link">&larr; Volver a la biblioteca</a></p>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="flash">
+            {% for msg in messages %}
+            <p>{{ msg }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% if book.cover %}
+        <div class="cover-detail-wrap">
+            <img class="cover-detail" src="{{ url_for('epub_resource', filename=book.filename, resource=book.cover) }}" alt="Portada">
+        </div>
+        {% endif %}
+
+        <h1 class="detail-title">{{ book.title }}</h1>
+
+        <dl class="meta-list">
+            <dt>Autor</dt>
+            <dd>{{ book.author }}</dd>
+
+            {% if book.publisher %}
+            <dt>Editorial</dt>
+            <dd>{{ book.publisher }}</dd>
+            {% endif %}
+
+            {% if book.language %}
+            <dt>Idioma</dt>
+            <dd>{{ book.language }}</dd>
+            {% endif %}
+
+            {% if book.date %}
+            <dt>Fecha</dt>
+            <dd>{{ book.date }}</dd>
+            {% endif %}
+
+            {% if book.subject %}
+            <dt>Tema</dt>
+            <dd>{{ book.subject }}</dd>
+            {% endif %}
+
+            {% if book.identifier %}
+            <dt>Identificador</dt>
+            <dd>{{ book.identifier }}</dd>
+            {% endif %}
+
+            {% if book.rights %}
+            <dt>Derechos</dt>
+            <dd>{{ book.rights }}</dd>
+            {% endif %}
+
+            {% if book.description %}
+            <dt>Descripcion</dt>
+            <dd class="description">{{ book.description }}</dd>
+            {% endif %}
+
+            <dt>Archivo</dt>
+            <dd>{{ book.filename }}</dd>
+
+            <dt>Tamano</dt>
+            <dd>{{ "%.1f"|format(book.filesize / 1048576) }} MB</dd>
+
+            <dt>Modificado</dt>
+            <dd>{{ book.modified }}</dd>
+        </dl>
+
+        <div class="detail-actions">
+            <a class="btn-read" href="{{ url_for('read_book', filename=book.filename) }}">Leer</a>
+            <a class="btn-download" href="{{ url_for('download', filename=book.filename) }}">Descargar</a>
+        </div>
+        <div class="detail-actions" style="margin-top: 0.5rem;">
+            <form method="post" action="{{ url_for('delete_book', filename=book.filename) }}" class="delete-form">
+                <button type="submit" class="btn-delete">Eliminar</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
