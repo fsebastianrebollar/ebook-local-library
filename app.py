@@ -10,6 +10,7 @@ import tempfile
 import zipfile
 import xml.etree.ElementTree as ET
 from pathlib import Path, PurePosixPath
+from urllib.parse import unquote
 
 from flask import Flask, jsonify, render_template, request, send_from_directory, send_file, redirect, url_for, flash
 from markupsafe import Markup
@@ -210,7 +211,7 @@ def find_cover_path(filepath: Path) -> str | None:
             for item in manifest.values():
                 props = item.get("properties", "")
                 if "cover-image" in props:
-                    href = item.get("href")
+                    href = unquote(item.get("href"))
                     return posixpath.join(opf_dir, href) if opf_dir else href
 
             # Method 2: <meta name="cover" content="item-id"> (EPUB2)
@@ -218,7 +219,7 @@ def find_cover_path(filepath: Path) -> str | None:
                 if meta_el.get("name") == "cover":
                     cover_id = meta_el.get("content")
                     if cover_id and cover_id in manifest:
-                        href = manifest[cover_id].get("href")
+                        href = unquote(manifest[cover_id].get("href"))
                         return posixpath.join(opf_dir, href) if opf_dir else href
 
             # Method 3: look for common cover filenames
@@ -468,7 +469,7 @@ def get_epub_spine(filepath: Path) -> list[dict]:
             # Build manifest map: id -> href
             manifest = {}
             for item in opf.findall(f".//{opf_ns}item"):
-                manifest[item.get("id")] = item.get("href")
+                manifest[item.get("id")] = unquote(item.get("href"))
 
             # Get spine order
             for itemref in opf.findall(f".//{opf_ns}itemref"):
@@ -544,7 +545,7 @@ def read_book(filename):
         src = m.group(3)
         if src.startswith(("http://", "https://", "data:")):
             return m.group(0)
-        abs_path = posixpath.normpath(posixpath.join(chapter_dir, src))
+        abs_path = posixpath.normpath(posixpath.join(chapter_dir, unquote(src)))
         new_url = url_for("epub_resource", filename=filename, resource=abs_path)
         return f'{attr}={quote}{new_url}{quote}'
 
