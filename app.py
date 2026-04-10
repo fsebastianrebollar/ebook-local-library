@@ -1,3 +1,4 @@
+import argparse
 import io
 import mimetypes
 import os
@@ -10,7 +11,7 @@ import zipfile
 import xml.etree.ElementTree as ET
 from pathlib import Path, PurePosixPath
 
-from flask import Flask, render_template, request, send_from_directory, send_file, redirect, url_for, flash
+from flask import Flask, jsonify, render_template, request, send_from_directory, send_file, redirect, url_for, flash
 from markupsafe import Markup
 from werkzeug.utils import secure_filename
 
@@ -19,7 +20,12 @@ ACSM_LIB = Path(__file__).parent / "acsm_lib"
 sys.path.insert(0, str(ACSM_LIB))
 
 app = Flask(__name__)
-app.secret_key = "epub-local-library"
+app.secret_key = os.environ.get("SECRET_KEY", "epub-local-library")
+
+
+@app.route("/health")
+def health():
+    return jsonify({"status": "ok", "app": "ebook-local-library"}), 200
 
 UPLOAD_FOLDER = Path(__file__).parent / "storage" / "epubs"
 UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
@@ -588,4 +594,11 @@ def download(filename):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5005, debug=True)
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=int(os.environ.get("PORT", 8000)),
+    )
+    args = parser.parse_args()
+    app.run(host="0.0.0.0", port=args.port)
