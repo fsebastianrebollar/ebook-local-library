@@ -521,10 +521,38 @@ def addNonce():
     return ret
 
 
-def get_cert_from_pkcs12(_pkcs12, _key):
+def _pkcs12_cert_der(pkcs12_data, password):
+    """Extract certificate DER from PKCS12, with fallback for systems without RC2 support."""
+    try:
+        _, cert, _ = keys.parse_pkcs12(pkcs12_data, password)
+        return dump_certificate(cert, encoding="der")
+    except Exception as e:
+        if "RC2" not in str(e) and "rc2" not in str(e).lower():
+            raise
+    from cryptography.hazmat.primitives.serialization import pkcs12 as crypto_pkcs12
+    from cryptography.hazmat.primitives.serialization import Encoding
+    pwd = password if isinstance(password, bytes) else password.encode()
+    _, cert, _ = crypto_pkcs12.load_key_and_certificates(pkcs12_data, pwd)
+    return cert.public_bytes(Encoding.DER)
 
-    _, cert, _ = keys.parse_pkcs12(_pkcs12, _key)
-    return dump_certificate(cert, encoding="der")
+
+def _pkcs12_privkey_der(pkcs12_data, password):
+    """Extract private key DER from PKCS12, with fallback for systems without RC2 support."""
+    try:
+        priv_key, _, _ = keys.parse_pkcs12(pkcs12_data, password)
+        return dump_private_key(priv_key, None, "der")
+    except Exception as e:
+        if "RC2" not in str(e) and "rc2" not in str(e).lower():
+            raise
+    from cryptography.hazmat.primitives.serialization import pkcs12 as crypto_pkcs12
+    from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, NoEncryption
+    pwd = password if isinstance(password, bytes) else password.encode()
+    priv_key, _, _ = crypto_pkcs12.load_key_and_certificates(pkcs12_data, pwd)
+    return priv_key.private_bytes(Encoding.DER, PrivateFormat.PKCS8, NoEncryption())
+
+
+def get_cert_from_pkcs12(_pkcs12, _key):
+    return _pkcs12_cert_der(_pkcs12, _key)
 
 
 
@@ -554,8 +582,7 @@ def sign_node(node):
         return None
 
     my_pkcs12 = base64.b64decode(pkcs12)
-    my_priv_key, _, _ = keys.parse_pkcs12(my_pkcs12, base64.b64encode(devkey_bytes))
-    my_priv_key = dump_private_key(my_priv_key, None, "der")
+    my_priv_key = _pkcs12_privkey_der(my_pkcs12, base64.b64encode(devkey_bytes))
 
     # textbook RSA with that private key
 
