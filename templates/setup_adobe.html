@@ -30,8 +30,10 @@
         <div class="status-warn">
             <p>No hay cuenta Adobe configurada. Necesitas autorizar una para poder convertir archivos .acsm a ePub.</p>
         </div>
+        {% endif %}
 
         <form method="post" class="upload-form">
+            {% if authorized %}<p class="hint">La re-autorizacion reemplazara el dispositivo actual.</p>{% endif %}
             <p class="hint">Deja los campos vacios para autorizacion anonima (recomendado).</p>
 
             <label for="email">Adobe ID (email):</label>
@@ -40,9 +42,8 @@
             <label for="password">Contrasena:</label>
             <input type="password" id="password" name="password" placeholder="Opcional">
 
-            <button type="submit">Autorizar dispositivo</button>
+            <button type="submit">{% if authorized %}Re-autorizar dispositivo{% else %}Autorizar dispositivo{% endif %}</button>
         </form>
-        {% endif %}
     </div>
 </body>
 </html>

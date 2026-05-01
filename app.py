@@ -45,11 +45,16 @@ SORT_OPTIONS = {
 
 
 def adobe_authorized() -> bool:
-    """Check if Adobe device authorization files exist."""
-    return all(
-        (ADEPT_DIR / f).is_file()
-        for f in ("devicesalt", "device.xml", "activation.xml")
-    )
+    """Check if Adobe device authorization files exist and activation is complete."""
+    if not all((ADEPT_DIR / f).is_file() for f in ("devicesalt", "device.xml", "activation.xml")):
+        return False
+    try:
+        from lxml import etree
+        adNS = lambda tag: '{%s}%s' % ('http://ns.adobe.com/adept', tag)
+        tree = etree.parse(str(ADEPT_DIR / "activation.xml"))
+        return tree.find("./%s/%s" % (adNS("activationToken"), adNS("device"))) is not None
+    except Exception:
+        return False
 
 
 def unique_filename(directory: Path, filename: str) -> str:
